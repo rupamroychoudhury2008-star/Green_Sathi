@@ -1,0 +1,270 @@
+/* ===============================
+   1. VARIABLES & THEME
+================================ */
+:root {
+  --primary-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.3);
+  --font-main: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ===============================
+   2. RESET & BASE
+================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-main);
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- CUSTOM SCROLLBAR (Premium Touch) --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ===============================
+   3. TYPOGRAPHY
+================================ */
+a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
+
+/* Gradient Text Class */
+.text-gradient {
+  background: linear-gradient(to right, #4ade80, #2dd4bf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 30px;
+  text-align: center;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ===============================
+   4. LAYOUT & CONTAINERS
+================================ */
+.page-container {
+  padding: 80px 20px 40px; /* Top padding for Navbar */
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* GLASS CARD - The core UI element */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===============================
+   5. FORMS & INPUTS
+================================ */
+input, select, textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937; /* Dark text for readability */
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+/* Focus State - Glowing Green Border */
+input:focus, select:focus, textarea:focus {
+  background: #ffffff;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+  transform: scale(1.01);
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  margin-left: 4px;
+}
+
+/* ===============================
+   6. BUTTONS
+================================ */
+button { cursor: pointer; border: none; font-family: inherit; }
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(34, 197, 94, 0.5);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ===============================
+   7. RESULT & FEEDBACK UI
+================================ */
+/* Solves the white-text-on-white-bg issue */
+.result-card {
+  background: #ffffff;
+  color: #1f2937;
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 30px;
+  animation: slideInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-left: 6px solid #22c55e;
+}
+
+.result-card h2, .result-card h3, .result-card h4 {
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.result-card p, .result-card li {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fef9c3; color: #854d0e; }
+.badge-error   { background: #fee2e2; color: #991b1b; }
+
+/* Advisory/Warning Box */
+.advisory-box {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* ===============================
+   8. UTILITIES & ANIMATIONS
+================================ */
+/* Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===============================
+   9. MOBILE RESPONSIVENESS
+================================ */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 20px;
+    padding-top: 80px; /* Space for fixed navbar */
+  }
+  
+  .glass-card {
+    padding: 25px;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+  }
+}
