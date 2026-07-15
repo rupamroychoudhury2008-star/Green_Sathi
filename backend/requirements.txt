@@ -11,3 +11,4 @@ joblib
 google-generativeai
 google-cloud-translate
 openai
+tensorflow
