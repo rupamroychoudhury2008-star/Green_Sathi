@@ -6,4 +6,7 @@ requests
 pillow
 google-generativeai
 google-cloud-translate
+groq
 openai
+tensorflow==2.15.0
+numpy
