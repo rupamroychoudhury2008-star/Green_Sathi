@@ -8,7 +8,7 @@ export async function predictCropDisease(formData) {
   payload.append("language", formData.language);
   payload.append("image", formData.image);
 
-  const response = await fetch(`${API_BASE_URL}/predict`, {
+  const response = await fetch(`${API_BASE_URL}/api/predict`, {
     method: "POST",
     body: payload,
   });

@@ -1,5 +1,5 @@
 export async function fetchNews() {
-  const response = await fetch("https://green-sathi.onrender.com/api/predict"); // 👈 trailing slash REQUIRED
+  const response = await fetch("https://green-sathi.onrender.com/api/news/"); // 👈 trailing slash REQUIRED
 
   if (!response.ok) {
     throw new Error("Failed to fetch news");
