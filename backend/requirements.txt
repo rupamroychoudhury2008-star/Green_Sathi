@@ -4,9 +4,11 @@ python-dotenv
 python-multipart
 requests
 pillow
+numpy
+pandas
+scikit-learn
+joblib
 google-generativeai
 google-cloud-translate
 groq
 openai
-tensorflow==2.15.0
-numpy
