@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo } from "react";
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import GlassCard from "../components/GlassCard";
 
@@ -7,8 +7,6 @@ import GlassCard from "../components/GlassCard";
  * (hoisted out of the component so they aren't re-created,
  * and re-parsed, on every render)
  * ============================================================ */
-
-const THEME_STORAGE_KEY = "green-sathi-theme";
 
 const NAV_ITEMS = [
   { path: "/predict", label: "Predict Disease", icon: "🔍" },
@@ -41,7 +39,8 @@ const SOCIAL_LINKS = [
 ];
 
 /* Static CSS — defined once at module scope so the string (and the
- * <style> node's text content) isn't rebuilt on every render. */
+ * <style> node's text content) isn't rebuilt on every render.
+ * Single fixed dark theme (no light/dark toggle). */
 const HOME_STYLES = `
   /* ============================== THEME TOKENS ============================== */
   .home-container {
@@ -61,35 +60,7 @@ const HOME_STYLES = `
     --social-icon: #a1a1aa;
     --social-hover-bg: #ffffff;
     --social-hover-icon: #09090b;
-    --toggle-bg: rgba(255, 255, 255, 0.08);
-    --toggle-border: rgba(255, 255, 255, 0.15);
-    --toggle-icon: #fbbf24;
     --focus-ring: #34d399;
-
-    transition: background-color 0.4s ease, color 0.4s ease;
-  }
-
-  .home-container[data-theme="light"] {
-    --bg: #f4f4f5;
-    --bg-radial-1: rgba(16, 185, 129, 0.08);
-    --bg-radial-2: rgba(34, 197, 94, 0.06);
-    --card-bg: rgba(255, 255, 255, 0.75);
-    --card-border: rgba(9, 9, 11, 0.08);
-    --card-shadow: rgba(9, 9, 11, 0.18);
-    --text-primary: #0f172a;
-    --text-secondary: #52525b;
-    --text-muted: #71717a;
-    --divider: rgba(9, 9, 11, 0.1);
-    --crystal-face: rgba(9, 9, 11, 0.04);
-    --social-bg: rgba(9, 9, 11, 0.05);
-    --social-border: rgba(9, 9, 11, 0.1);
-    --social-icon: #52525b;
-    --social-hover-bg: #0f172a;
-    --social-hover-icon: #ffffff;
-    --toggle-bg: rgba(9, 9, 11, 0.05);
-    --toggle-border: rgba(9, 9, 11, 0.12);
-    --toggle-icon: #f59e0b;
-    --focus-ring: #059669;
   }
 
   /* --- LAYOUT --- */
@@ -110,42 +81,10 @@ const HOME_STYLES = `
   }
 
   /* --- FOCUS VISIBILITY (accessibility floor) --- */
-  .theme-toggle:focus-visible,
   .action-btn:focus-visible,
   .social-icon-link:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
-  }
-
-  /* --- THEME TOGGLE --- */
-  .theme-toggle {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    z-index: 20;
-    width: 48px;
-    height: 48px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--toggle-bg);
-    border: 1px solid var(--toggle-border);
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, border-color 0.3s ease;
-    color: var(--toggle-icon);
-  }
-  .theme-toggle:hover {
-    transform: translateY(-3px) scale(1.06);
-  }
-  .theme-toggle:active {
-    transform: scale(0.94);
-  }
-  .theme-toggle svg {
-    width: 22px;
-    height: 22px;
-    transition: transform 0.4s ease, opacity 0.3s ease;
   }
 
   /* --- 3D FLOATING CRYSTALS --- */
@@ -173,7 +112,6 @@ const HOME_STYLES = `
     border-bottom: 86.6px solid var(--crystal-face);
     transform-origin: 50% 57.7%;
     backdrop-filter: blur(2px);
-    transition: border-bottom-color 0.4s ease;
   }
 
   .pyramid div:nth-child(1) { transform: rotateX(30deg) translateZ(28.8px); }
@@ -203,7 +141,6 @@ const HOME_STYLES = `
     text-transform: uppercase;
     text-shadow: 0 10px 30px rgba(0,0,0,0.35);
     transform: translateZ(20px);
-    transition: color 0.4s ease;
   }
 
   .hero-subtitle {
@@ -212,7 +149,6 @@ const HOME_STYLES = `
     margin: 0 0 40px;
     font-weight: 500;
     transform: translateZ(10px);
-    transition: color 0.4s ease;
   }
 
   /* --- BUTTON GRID --- */
@@ -286,7 +222,6 @@ const HOME_STYLES = `
     animation-delay: 0.6s;
     opacity: 0;
     transform: translateZ(15px);
-    transition: border-color 0.4s ease;
   }
 
   .social-title {
@@ -296,7 +231,6 @@ const HOME_STYLES = `
     margin: 0 0 15px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    transition: color 0.4s ease;
   }
 
   .social-icons-container {
@@ -361,19 +295,16 @@ const HOME_STYLES = `
     .home-container { padding: 100px 20px 40px; }
     .hero-title { font-size: 2.2rem; }
     .hero-subtitle { font-size: 1rem; }
-    .theme-toggle { top: 16px; right: 16px; width: 42px; height: 42px; }
   }
 
   /* --- REDUCED MOTION (accessibility floor) --- */
   @media (prefers-reduced-motion: reduce) {
-    .home-container,
     .pyramid,
     .glass-wrapper,
     .action-btn-wrapper,
     .farmer-avatar-wrapper,
     .farmer-eye,
     .social-footer,
-    .theme-toggle,
     .action-btn,
     .social-icon-link {
       animation: none !important;
@@ -387,49 +318,8 @@ const HOME_STYLES = `
 `;
 
 /* ============================================================
- * Theme helpers
- * ============================================================ */
-
-function getInitialTheme() {
-  try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved === "light" || saved === "dark") return saved;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: light)").matches
-    ) {
-      return "light";
-    }
-  } catch {
-    /* localStorage/matchMedia unavailable (SSR, private browsing, etc.) */
-  }
-  return "dark";
-}
-
-/* ============================================================
  * Sub-components
  * ============================================================ */
-
-const SunIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="12" r="5" />
-    <line x1="12" y1="1" x2="12" y2="3" />
-    <line x1="12" y1="21" x2="12" y2="23" />
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-    <line x1="1" y1="12" x2="3" y2="12" />
-    <line x1="21" y1="12" x2="23" y2="12" />
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-  </svg>
-);
-
-const MoonIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-  </svg>
-);
 
 const FarmerAvatar = () => (
   <svg viewBox="0 0 200 200" className="farmer-svg" role="img" aria-label="Illustrated Green Sathi farmer assistant avatar">
@@ -521,35 +411,10 @@ const SocialFooter = () => (
 
 export default function Home() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(getInitialTheme);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      /* ignore write errors (e.g. private browsing / storage full) */
-    }
-  }, [theme]);
-
-  const isDark = theme === "dark";
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }, []);
 
   return (
-    <div className="home-container" data-theme={theme}>
+    <div className="home-container">
       <style>{HOME_STYLES}</style>
-
-      <button
-        type="button"
-        className="theme-toggle"
-        onClick={toggleTheme}
-        aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-        title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      >
-        {isDark ? <SunIcon /> : <MoonIcon />}
-      </button>
 
       <BackgroundScene />
 
@@ -566,7 +431,6 @@ export default function Home() {
             boxShadow: "0 50px 100px var(--card-shadow)",
             textAlign: "center",
             transformStyle: "preserve-3d",
-            transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
           }}
         >
           <main>
