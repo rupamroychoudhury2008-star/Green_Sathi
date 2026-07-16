@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 /* Pages */
@@ -11,9 +12,18 @@ import Chatbot from "./pages/Chatbot";
 import Navbar from "./components/Navbar";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-theme" : "light-theme";
+  }, [darkMode]);
+
   return (
     <>
-      <Navbar />
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -22,7 +32,6 @@ function App() {
         <Route path="/surveys" element={<Surveys />} />
         <Route path="/chatbot" element={<Chatbot />} />
 
-        {/* fallback */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
