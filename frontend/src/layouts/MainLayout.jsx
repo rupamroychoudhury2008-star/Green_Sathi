@@ -1,73 +1,98 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, Outlet } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Outlet } from "react-router-dom";
 
 function MainLayout() {
   const { pathname } = useLocation();
 
-  // 1. Auto Scroll-To-Top on route change
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") !== "light";
+  });
+
+  // Scroll to top
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      left: 0,
-      behavior: "smooth", // Smooth scrolling
+      behavior: "smooth",
     });
   }, [pathname]);
 
+  // Apply theme
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-theme");
+      document.body.classList.remove("light-theme");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.add("light-theme");
+      document.body.classList.remove("dark-theme");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   return (
-    <div className="main-layout">
+    <div className={`main-layout ${darkMode ? "dark-theme" : "light-theme"}`}>
       <style>{`
-        /* --- ADVANCED LAYOUT STYLING --- */
-
-        /* 1. Sticky Footer Setup */
-        .main-layout {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh; /* Forces layout to take full screen height */
-          background-color: #09090b; /* Consistent Dark Theme Background */
-          font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        *{
+          transition:
+          background .3s ease,
+          color .3s ease,
+          border-color .3s ease;
         }
 
-        /* 2. Content Wrapper */
-        .content-wrapper {
-          flex: 1; /* Pushes footer down if content is short */
-          width: 100%;
-          position: relative;
-          z-index: 1;
-          /* Advanced Padding: Less on mobile, more on desktop */
-          padding: 20px 40px; 
+        body.dark-theme{
+          background:#09090b;
+          color:white;
         }
 
-        /* 3. Smooth Page Transitions */
-        .page-transition {
-          animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        body.light-theme{
+          background:#f5f7fa;
+          color:#222;
         }
 
-        @keyframes fadeSlideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
+        .main-layout{
+          display:flex;
+          flex-direction:column;
+          min-height:100vh;
+          font-family:'Segoe UI',sans-serif;
+        }
+
+        .content-wrapper{
+          flex:1;
+          width:100%;
+          padding:20px 40px;
+        }
+
+        .page-transition{
+          animation:fadeSlide .45s ease;
+        }
+
+        @keyframes fadeSlide{
+          from{
+            opacity:0;
+            transform:translateY(18px);
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          to{
+            opacity:1;
+            transform:translateY(0);
           }
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-          .content-wrapper {
-            padding: 20px 15px; /* Tighter padding on mobile */
+        @media(max-width:768px){
+          .content-wrapper{
+            padding:15px;
           }
         }
       `}</style>
 
-      <Navbar />
-      
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
+
       <main className="content-wrapper">
-        {/* Key prop triggers animation on route change */}
         <div key={pathname} className="page-transition">
           <Outlet />
         </div>
