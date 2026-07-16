@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 // --- 30 PRE-DEFINED FARMING FACTS ---
@@ -34,8 +35,40 @@ const FARMING_FACTS = [
   "Agriculture contributes to about 18% of India's GDP."
 ];
 
+const THEME_STORAGE_KEY = "green-sathi-theme";
+
+function getInitialTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved === "light" || saved === "dark") return saved;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      return "dark";
+    }
+  } catch {
+    /* localStorage/matchMedia unavailable (SSR, private browsing, etc.) */
+  }
+  return "light";
+}
+
 export default function Navbar() {
   const location = useLocation();
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
+    try {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      /* ignore write errors (e.g. private browsing / storage full) */
+    }
+  }, [theme]);
+
+  const isDark = theme === "dark";
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
     <>
@@ -43,6 +76,37 @@ export default function Navbar() {
       <nav className="navbar">
         <style>{`
           /* --- GOD LEVEL NAVBAR STYLING --- */
+
+          /* --- THEME TOKENS (default = light, matches original look) --- */
+          :root {
+            --navbar-bg: rgba(255, 255, 255, 0.9);
+            --navbar-shadow: rgba(0, 0, 0, 0.05);
+            --nav-text: #2d3436;
+            --nav-text-hover: #11998e;
+            --nav-accent-1: #11998e;
+            --nav-accent-2: #38ef7d;
+            --ticker-bg: rgba(17, 24, 39, 0.95);
+            --ticker-border: #22c55e;
+            --ticker-text: #ecfdf5;
+            --toggle-bg: rgba(9, 9, 11, 0.05);
+            --toggle-border: rgba(9, 9, 11, 0.12);
+            --toggle-icon: #11998e;
+          }
+
+          :root[data-theme="dark"] {
+            --navbar-bg: rgba(17, 24, 39, 0.9);
+            --navbar-shadow: rgba(0, 0, 0, 0.4);
+            --nav-text: #e5e7eb;
+            --nav-text-hover: #38ef7d;
+            --nav-accent-1: #11998e;
+            --nav-accent-2: #38ef7d;
+            --ticker-bg: rgba(9, 9, 11, 0.95);
+            --ticker-border: #22c55e;
+            --ticker-text: #ecfdf5;
+            --toggle-bg: rgba(255, 255, 255, 0.08);
+            --toggle-border: rgba(255, 255, 255, 0.15);
+            --toggle-icon: #fbbf24;
+          }
           
           /* 1. Container: Glassmorphism & Positioning */
           .navbar {
@@ -50,13 +114,14 @@ export default function Navbar() {
             justify-content: space-between;
             align-items: center;
             padding: 15px 40px;
-            background: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            background: var(--navbar-bg);
             backdrop-filter: blur(12px); /* Glass effect */
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 30px var(--navbar-shadow);
             position: sticky;
             top: 0;
             z-index: 1000;
             animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
           }
 
           /* 2. Logo: Gradient Text */
@@ -65,7 +130,7 @@ export default function Navbar() {
             font-weight: 800;
             text-decoration: none;
             /* Gradient for "Green Sathi" */
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, var(--nav-accent-1) 0%, var(--nav-accent-2) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
@@ -88,6 +153,7 @@ export default function Navbar() {
           /* 3. Links: Dark Color & Animations */
           .nav-links {
             display: flex;
+            align-items: center;
             gap: 30px;
             list-style: none;
             margin: 0;
@@ -96,7 +162,7 @@ export default function Navbar() {
 
           .nav-item {
             text-decoration: none;
-            color: #2d3436; /* Dark Grey - Fixes visibility issue */
+            color: var(--nav-text); /* Fixes visibility issue */
             font-weight: 600;
             font-size: 1.05rem;
             position: relative;
@@ -105,7 +171,7 @@ export default function Navbar() {
           }
 
           .nav-item:hover {
-            color: #11998e; /* Green on hover */
+            color: var(--nav-text-hover); /* Green on hover */
           }
 
           /* Animated Underline */
@@ -116,7 +182,7 @@ export default function Navbar() {
             height: 3px;
             bottom: 0;
             left: 0;
-            background: linear-gradient(90deg, #11998e, #38ef7d);
+            background: linear-gradient(90deg, var(--nav-accent-1), var(--nav-accent-2));
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 2px;
           }
@@ -128,7 +194,33 @@ export default function Navbar() {
 
           /* Active State */
           .nav-item.active {
-            color: #11998e;
+            color: var(--nav-accent-1);
+          }
+
+          /* --- THEME TOGGLE BUTTON --- */
+          .nav-theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--toggle-bg);
+            border: 1px solid var(--toggle-border);
+            color: var(--toggle-icon);
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, border-color 0.3s ease;
+            flex-shrink: 0;
+          }
+          .nav-theme-toggle:hover {
+            transform: translateY(-2px) scale(1.06);
+          }
+          .nav-theme-toggle:active {
+            transform: scale(0.94);
+          }
+          .nav-theme-toggle svg {
+            width: 18px;
+            height: 18px;
           }
 
           @keyframes slideDown {
@@ -151,14 +243,15 @@ export default function Navbar() {
             left: 0;
             width: 100%;
             height: 40px;
-            background: rgba(17, 24, 39, 0.95); /* Dark background */
+            background: var(--ticker-bg);
             backdrop-filter: blur(5px);
-            border-top: 1px solid #22c55e;
+            border-top: 1px solid var(--ticker-border);
             display: flex;
             align-items: center;
             overflow: hidden;
             z-index: 2000;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            transition: background 0.3s ease;
           }
 
           .ticker-track {
@@ -172,7 +265,7 @@ export default function Navbar() {
           }
 
           .ticker-item {
-            color: #ecfdf5;
+            color: var(--ticker-text);
             font-size: 0.95rem;
             font-family: 'Segoe UI', sans-serif;
             margin-right: 60px; /* Space between facts */
@@ -233,6 +326,32 @@ export default function Navbar() {
           >
             Surveys
           </Link>
+
+          <button
+            type="button"
+            className="nav-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDark ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
 
