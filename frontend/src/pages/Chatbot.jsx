@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { sendMessage } from "../services/chatbotApi";
 
 function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const chatWindowRef = useRef(null);
 
   async function handleSend() {
     if (!input.trim()) return;
@@ -31,6 +32,14 @@ function Chatbot() {
     }
   }
 
+  // Keep the conversation scrolled to the latest message.
+  useEffect(() => {
+    const node = chatWindowRef.current;
+    if (node) {
+      node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
+    }
+  }, [messages, loading]);
+
   return (
     <div className="chatbot-page">
       <style>{`
@@ -49,7 +58,7 @@ function Chatbot() {
           overflow: hidden;
         }
 
-        /* --- NEW: FUTURISTIC BACKGROUND ANIMATION --- */
+        /* --- FUTURISTIC BACKGROUND ANIMATION --- */
         .tech-background {
           position: absolute;
           top: 0; left: 0; width: 100%; height: 100%;
@@ -112,12 +121,10 @@ function Chatbot() {
           100% { transform: scale(1.2) translate(50px, 20px); opacity: 0.8; }
         }
 
-
-        /* Main Chat Container - Glassmorphism */
+        /* Main Chat Container - Glassmorphism, with a slow "breathing" outer glow */
         .chat-container {
           width: 100%;
           max-width: 500px;
-          /* Updated Glass Effect for Dark BG */
           background: rgba(255, 255, 255, 0.05);
           backdrop-filter: blur(25px);
           border-radius: 25px;
@@ -129,13 +136,20 @@ function Chatbot() {
           flex-direction: column;
           height: 600px;
           position: relative;
-          z-index: 10; /* Above BG */
-          animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          z-index: 10;
+          animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), containerGlow 6s ease-in-out infinite;
         }
 
-        /* Header */
+        @keyframes containerGlow {
+          0%, 100% { box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1), 0 0 30px rgba(34,197,94,0); }
+          50% { box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.12), 0 0 30px rgba(34,197,94,0.15); }
+        }
+
+        /* Header — subtle animated gradient sheen */
         .chat-header {
-          background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.9));
+          background: linear-gradient(120deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.9), rgba(16, 185, 129, 0.9));
+          background-size: 200% 200%;
+          animation: headerSheen 8s ease infinite;
           padding: 15px 20px;
           color: white;
           display: flex;
@@ -147,6 +161,14 @@ function Chatbot() {
           border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
+        @keyframes headerSheen {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .header-text { flex: 1; min-width: 0; }
+
         .header-text h1 {
           margin: 0;
           font-size: 1.4rem;
@@ -155,10 +177,33 @@ function Chatbot() {
           text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .header-text p {
-          margin: 2px 0 0;
+        .header-status {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin: 3px 0 0;
           font-size: 0.85rem;
-          opacity: 0.9;
+          opacity: 0.92;
+        }
+
+        .status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #a7f3d0;
+          box-shadow: 0 0 0 rgba(167, 243, 208, 0.6);
+          animation: statusPulse 2s ease-in-out infinite;
+          flex-shrink: 0;
+        }
+        .status-dot.busy {
+          background: #fde68a;
+          animation-duration: 0.9s;
+        }
+
+        @keyframes statusPulse {
+          0% { box-shadow: 0 0 0 0 rgba(167, 243, 208, 0.6); }
+          70% { box-shadow: 0 0 0 6px rgba(167, 243, 208, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(167, 243, 208, 0); }
         }
 
         /* --- 3D ROBOT CONTAINER --- */
@@ -167,6 +212,7 @@ function Chatbot() {
           height: 90px;
           position: relative;
           filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4));
+          flex-shrink: 0;
         }
 
         .robot-svg {
@@ -239,21 +285,40 @@ function Chatbot() {
           flex: 1;
           padding: 20px;
           overflow-y: auto;
-          background: rgba(15, 23, 42, 0.6); /* Semi-transparent dark */
+          background: rgba(15, 23, 42, 0.6);
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 14px;
           scroll-behavior: smooth;
         }
 
         .chat-window::-webkit-scrollbar { width: 6px; }
         .chat-window::-webkit-scrollbar-track { background: transparent; }
         .chat-window::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .chat-window::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
 
-        .message-row { display: flex; width: 100%; }
+        .message-row { display: flex; width: 100%; align-items: flex-end; gap: 8px; }
+
+        .message-avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.9rem;
+          flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .message-avatar.bot {
+          background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        .message-avatar.user {
+          background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
         
         .message-bubble {
-          max-width: 80%;
+          max-width: 76%;
           padding: 12px 16px;
           border-radius: 18px;
           font-size: 0.95rem;
@@ -261,6 +326,12 @@ function Chatbot() {
           position: relative;
           box-shadow: 0 4px 10px rgba(0,0,0,0.2);
           backdrop-filter: blur(5px);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          word-break: break-word;
+        }
+        .message-bubble:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 14px rgba(0,0,0,0.28);
         }
 
         .message-row.user { justify-content: flex-end; animation: slideInRight 0.4s ease-out forwards; }
@@ -273,7 +344,7 @@ function Chatbot() {
 
         .message-row.bot { justify-content: flex-start; animation: slideInLeft 0.4s ease-out forwards; }
         .message-row.bot .message-bubble {
-          background: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.92);
           color: #1e293b;
           border-bottom-left-radius: 4px;
         }
@@ -290,9 +361,28 @@ function Chatbot() {
         .dot:nth-child(1) { animation-delay: -0.32s; }
         .dot:nth-child(2) { animation-delay: -0.16s; }
 
+        .empty-state {
+          text-align: center;
+          color: rgba(255,255,255,0.7);
+          margin: auto;
+          animation: fadeIn 1s;
+        }
+        .empty-state .empty-icon {
+          font-size: 3rem;
+          margin: 0;
+          animation: floatIcon 3s ease-in-out infinite;
+        }
+        .empty-state p:last-child {
+          margin: 6px 0 0;
+        }
+        @keyframes floatIcon {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
         .input-area {
           padding: 15px 20px; 
-          background: rgba(30, 41, 59, 0.8); /* Dark glass input area */
+          background: rgba(30, 41, 59, 0.8);
           border-top: 1px solid rgba(255,255,255,0.1);
           display: flex; gap: 10px; align-items: center;
         }
@@ -312,9 +402,21 @@ function Chatbot() {
           background: #22c55e; color: white; border: none; border-radius: 50%; width: 45px; height: 45px;
           display: flex; align-items: center; justify-content: center; cursor: pointer;
           transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.4);
+          flex-shrink: 0;
         }
-        .send-btn:hover { transform: scale(1.1); background: #16a34a; box-shadow: 0 0 15px #22c55e; }
-        .send-btn:active { transform: scale(0.95); }
+        .send-btn:hover:not(:disabled) { transform: scale(1.1); background: #16a34a; box-shadow: 0 0 15px #22c55e; }
+        .send-btn:active:not(:disabled) { transform: scale(0.95); }
+        .send-btn:focus-visible,
+        .chat-input:focus-visible {
+          outline: 2px solid #4ade80;
+          outline-offset: 2px;
+        }
+        .send-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          box-shadow: none;
+          transform: none;
+        }
 
         /* --- KEYFRAMES --- */
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -334,10 +436,20 @@ function Chatbot() {
         @keyframes talkBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-2px); } }
         @keyframes gestureLeft { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-15deg); } }
         @keyframes gestureRight { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+
+        /* --- REDUCED MOTION --- */
+        @media (prefers-reduced-motion: reduce) {
+          .tech-grid, .tech-particle, .tech-glow, .chat-container, .chat-header,
+          .robot-svg, .status-dot, .message-row, .empty-state .empty-icon,
+          .bot-eye, .bot-flame, .send-btn, .message-bubble {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
       `}</style>
 
-      {/* --- BACKGROUND ANIMATION LAYER --- */
-      /* This adds the deep 3D grid and floating particles behind the chat card */}
+      {/* --- BACKGROUND ANIMATION LAYER --- */}
+      {/* This adds the deep 3D grid and floating particles behind the chat card */}
       <div className="tech-background">
         <div className="tech-grid"></div>
         <div className="tech-glow"></div>
@@ -351,9 +463,8 @@ function Chatbot() {
       <div className="chat-container">
         {/* Header */}
         <div className="chat-header">
-          
-          {/* --- 3D FULL BODY ROBOT AVATAR --- */
-          /* Kept this SVG as it provides great character */}
+          {/* --- 3D FULL BODY ROBOT AVATAR --- */}
+          {/* Kept this SVG as it provides great character */}
           <div className={`robot-container ${loading ? 'thinking' : ''} ${loading ? 'talking' : ''}`}>
              <svg viewBox="0 0 100 120" className="robot-svg">
                <defs>
@@ -412,15 +523,18 @@ function Chatbot() {
 
           <div className="header-text">
             <h1>Green Sathi Chat</h1>
-            <p>{loading ? "Processing Answer..." : "Your AI Farming Assistant"}</p>
+            <p className="header-status">
+              <span className={`status-dot ${loading ? "busy" : ""}`} aria-hidden="true"></span>
+              {loading ? "Processing Answer..." : "Your AI Farming Assistant"}
+            </p>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="chat-window">
+        <div className="chat-window" ref={chatWindowRef}>
           {messages.length === 0 && (
-            <div style={{ textAlign: "center", color: "rgba(255,255,255,0.7)", marginTop: "50px", animation: "fadeIn 1s" }}>
-              <p style={{ fontSize: "3rem", margin: 0 }}>🌱</p>
+            <div className="empty-state">
+              <p className="empty-icon">🌱</p>
               <p>Hi! Ask me anything about your crops.</p>
             </div>
           )}
@@ -430,14 +544,21 @@ function Chatbot() {
               key={i}
               className={`message-row ${msg.role}`}
             >
+              {msg.role === "bot" && (
+                <span className="message-avatar bot" aria-hidden="true">🤖</span>
+              )}
               <span className="message-bubble">
                 {msg.text}
               </span>
+              {msg.role === "user" && (
+                <span className="message-avatar user" aria-hidden="true">🧑‍🌾</span>
+              )}
             </div>
           ))}
 
           {loading && (
             <div className="message-row bot">
+              <span className="message-avatar bot" aria-hidden="true">🤖</span>
               <div className="typing-indicator">
                 <div className="dot"></div>
                 <div className="dot"></div>
@@ -456,8 +577,14 @@ function Chatbot() {
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask about disease, fertilizer..."
           />
-          <button className="send-btn" onClick={handleSend}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button
+            type="button"
+            className="send-btn"
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            aria-label="Send message"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
