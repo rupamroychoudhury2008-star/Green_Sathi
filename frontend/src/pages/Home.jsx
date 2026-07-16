@@ -32,6 +32,11 @@ const SOCIAL_LINKS = [
     d: "M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z",
   },
   {
+    label: "WhatsApp",
+    href: "https://wa.me/7258886424",
+    d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347zM20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.746.943 3.71 1.444 5.71 1.446h.006c9.68 0 14.789-11.375 8.451-17.712A11.02 11.02 0 0 0 20.52 3.449zM12.052 21.785h-.005c-1.775 0-3.517-.478-5.036-1.383l-.361-.214-3.744.975.995-3.653-.235-.375c-.984-1.566-1.505-3.376-1.504-5.235.002-5.412 4.407-9.816 9.826-9.816 2.62 0 5.077 1.024 6.923 2.883 1.849 1.858 2.867 4.318 2.865 6.938-.001 5.413-4.402 9.816-9.724 9.816z",
+  },
+  {
     label: "Email",
     href: "mailto:rupamroychoudhury2008@gmail.com",
     d: "M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-11.174l4.623 5.462zm5.377 2.738l-5.364-6.337 5.364-4.545 5.364 4.545-5.364 6.337zm5.378-2.738l4.622-5.462v11.175l-4.622-5.713zm-11.002 6.071l4.472-5.526 1.153 1.363 1.152-1.363 4.473 5.526h-11.25z",
@@ -68,6 +73,7 @@ const HOME_STYLES = `
     min-height: 100vh;
     padding: 80px 40px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background: var(--bg);
@@ -236,6 +242,7 @@ const HOME_STYLES = `
   .social-icons-container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 20px;
     list-style: none;
     padding: 0;
@@ -294,10 +301,10 @@ const HOME_STYLES = `
   .about-section {
     position: relative;
     z-index: 10;
-    max-width: 700px;
+    max-width: 780px;
     width: 100%;
     margin: 40px auto 0;
-    padding: 40px 50px;
+    padding: 48px 56px;
     border-radius: 20px;
     background: var(--card-bg);
     backdrop-filter: blur(20px);
@@ -324,26 +331,73 @@ const HOME_STYLES = `
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin: 0 0 16px;
+    margin: 0 0 24px;
     text-align: center;
     letter-spacing: -0.5px;
   }
 
-  .about-description {
-    font-size: 0.98rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin: 0 0 30px;
-    text-align: center;
+  .about-lead {
+    margin: 0 0 32px;
   }
 
+  .about-description {
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    text-align: left;
+  }
+
+  .about-description:last-child {
+    margin-bottom: 0;
+  }
+
+  /* --- MISSION / VISION --- */
+  .about-pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    margin: 0 0 36px;
+  }
+
+  .about-pillar {
+    padding: 22px;
+    border-radius: 14px;
+    background: var(--social-bg);
+    border: 1px solid var(--social-border);
+  }
+
+  .about-pillar-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+  }
+
+  .about-pillar-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* --- SECTION HEADINGS WITHIN ABOUT --- */
+  .about-subheading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0 0 20px;
+  }
+
+  /* --- VALUES / STATS GRIDS (shared card look) --- */
   .about-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 24px;
+    gap: 20px;
     list-style: none;
     padding: 0;
-    margin: 0 0 30px;
+    margin: 0 0 36px;
   }
 
   .about-card {
@@ -374,27 +428,39 @@ const HOME_STYLES = `
   }
 
   .about-stats {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
     text-align: center;
-    padding-top: 24px;
+    padding-top: 28px;
     border-top: 1px solid var(--divider);
   }
 
   .about-stat-value {
     display: block;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--text-primary);
+    line-height: 1.3;
   }
 
   .about-stat-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 4px;
+    margin-top: 6px;
+  }
+
+  .about-tagline {
+    margin: 32px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--divider);
+    text-align: center;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--text-secondary);
   }
 
   /* --- RESPONSIVE --- */
@@ -402,7 +468,7 @@ const HOME_STYLES = `
     .home-container { padding: 100px 20px 40px; }
     .hero-title { font-size: 2.2rem; }
     .hero-subtitle { font-size: 1rem; }
-    .about-section { padding: 30px 24px; }
+    .about-section { padding: 32px 24px; }
     .about-title { font-size: 1.4rem; }
   }
 
@@ -430,28 +496,52 @@ const HOME_STYLES = `
   }
 `;
 
-const ABOUT_HIGHLIGHTS = [
+const ABOUT_PARAGRAPHS = [
+  "Agriculture is the foundation of our world, yet millions of farmers continue to face preventable crop losses due to delayed disease identification, limited access to reliable information, and the growing impact of climate change. Green Sathi was created to help address these challenges through the responsible use of artificial intelligence.",
+  "Our platform combines advanced machine learning with an intuitive digital experience to provide farmers with timely disease detection, intelligent agricultural assistance, and access to relevant farming information. By transforming complex AI into practical tools, Green Sathi helps users make informed decisions with greater confidence.",
+  "We believe technology should simplify farming, not complicate it. Every feature is designed with accessibility, reliability, and real-world usability at its core, enabling farmers, agricultural professionals, and learners to benefit from modern AI without requiring technical expertise.",
+  "As agriculture continues to evolve, Green Sathi is committed to building solutions that support sustainable farming practices, improve productivity, and contribute to long-term food security.",
+];
+
+const ABOUT_PILLARS = [
   {
-    icon: "🌾",
-    title: "Built for Farmers",
-    text: "Designed with real growers in mind, so every feature solves an everyday field problem.",
+    title: "Our Mission",
+    text: "To make artificial intelligence a practical and accessible tool that empowers farmers to protect crops, improve productivity, and make informed agricultural decisions.",
   },
   {
-    icon: "🧠",
-    title: "AI-Driven Insights",
-    text: "Machine learning models trained to recognize crop diseases and support faster decisions.",
+    title: "Our Vision",
+    text: "To build a future where every farmer, regardless of location or scale, has access to intelligent agricultural technology that promotes sustainable farming and strengthens global food security.",
+  },
+];
+
+const ABOUT_VALUES = [
+  {
+    icon: "💡",
+    title: "Innovation",
+    text: "We continuously leverage advances in artificial intelligence to solve real agricultural challenges.",
   },
   {
-    icon: "🔒",
-    title: "Trusted & Secure",
-    text: "Your data stays private, with reliable performance you can depend on every season.",
+    icon: "🌍",
+    title: "Accessibility",
+    text: "Powerful technology should be available to everyone, not limited by geography or resources.",
+  },
+  {
+    icon: "🛡️",
+    title: "Reliability",
+    text: "Every recommendation is designed to deliver consistent, trustworthy support when it matters most.",
+  },
+  {
+    icon: "♻️",
+    title: "Sustainability",
+    text: "We believe technology should help create a more resilient and environmentally responsible agricultural ecosystem.",
   },
 ];
 
 const ABOUT_STATS = [
-  { value: "10K+", label: "Farmers Supported" },
-  { value: "50+", label: "Crop Types Covered" },
-  { value: "24/7", label: "AI Availability" },
+  { value: "10,000+", label: "Farmers Supported" },
+  { value: "50+", label: "Crop Categories Covered" },
+  { value: "24/7", label: "AI Assistance" },
+  { value: "AI-Powered", label: "Disease Detection & Guidance" },
 ];
 
 /* ============================================================
@@ -543,31 +633,44 @@ const SocialFooter = () => (
 );
 
 /**
- * Professional "About Us" section describing the product and team mission.
+ * Professional "About Us" section: mission, vision, values, and key stats.
  */
 const AboutSection = () => (
   <section className="about-section" aria-labelledby="about-us-title">
-    <p className="about-heading">About Us</p>
+    <p className="about-heading">About Green Sathi</p>
     <h2 className="about-title" id="about-us-title">
-      Empowering Farmers with AI
+      Empowering the Future of Agriculture
     </h2>
-    <p className="about-description">
-      Green Sathi is an AI-powered farming assistant built to help growers detect crop
-      diseases early, stay informed with the latest agricultural news, and make confident,
-      data-backed decisions in the field. Our mission is to make advanced agricultural
-      intelligence accessible to every farmer, regardless of scale or location.
-    </p>
 
+    <div className="about-lead">
+      {ABOUT_PARAGRAPHS.map((paragraph, index) => (
+        <p className="about-description" key={index}>
+          {paragraph}
+        </p>
+      ))}
+    </div>
+
+    <div className="about-pillars">
+      {ABOUT_PILLARS.map(({ title, text }) => (
+        <div className="about-pillar" key={title}>
+          <h3 className="about-pillar-title">{title}</h3>
+          <p className="about-pillar-text">{text}</p>
+        </div>
+      ))}
+    </div>
+
+    <h3 className="about-subheading">What We Stand For</h3>
     <ul className="about-grid">
-      {ABOUT_HIGHLIGHTS.map(({ icon, title, text }) => (
+      {ABOUT_VALUES.map(({ icon, title, text }) => (
         <li className="about-card" key={title}>
           <span className="about-card-icon" aria-hidden="true">{icon}</span>
-          <h3 className="about-card-title">{title}</h3>
+          <h4 className="about-card-title">{title}</h4>
           <p className="about-card-text">{text}</p>
         </li>
       ))}
     </ul>
 
+    <h3 className="about-subheading">By the Numbers</h3>
     <div className="about-stats">
       {ABOUT_STATS.map(({ value, label }) => (
         <div key={label}>
@@ -576,6 +679,10 @@ const AboutSection = () => (
         </div>
       ))}
     </div>
+
+    <p className="about-tagline">
+      Building intelligent technology that helps agriculture grow with confidence.
+    </p>
   </section>
 );
 
@@ -629,6 +736,7 @@ export default function Home() {
         </GlassCard>
       </div>
 
+      {/* About Us — rendered after the main panel (nav actions, social links) */}
       <AboutSection />
     </div>
   );
