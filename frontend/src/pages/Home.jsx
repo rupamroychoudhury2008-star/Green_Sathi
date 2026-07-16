@@ -13,11 +13,6 @@ const HERO_BG_IMAGE =
 const HERO_BG_VIDEO =
   "https://assets.mixkit.co/videos/preview/mixkit-tractor-plowing-a-field-in-the-countryside-4425-large.mp4";
 
-const BLOBS = [
-  { top: "8%", left: "6%", size: 140 },
-  { bottom: "10%", right: "8%", size: 110 },
-];
-
 const STATS = [
   { value: 50000, suffix: "+", label: "Farmers Helped" },
   { value: 98, suffix: "%", label: "Detection Accuracy" },
@@ -268,10 +263,10 @@ function Navbar({ navigate }) {
 function WeatherWidgetCompact() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -12, x: 10 }}
+      initial={{ opacity: 0, y: -10, x: 10 }}
       animate={{ opacity: 1, y: 0, x: 0 }}
-      transition={{ delay: 0.7, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute right-4 top-[90px] z-30 w-36 rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.08)] p-3 backdrop-blur-md sm:right-8 sm:top-[100px] sm:w-44"
+      transition={{ delay: 0.5, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="absolute right-4 top-4 z-30 w-32 rounded-2xl border border-white/10 bg-[rgba(255,255,255,0.08)] p-3 backdrop-blur-md sm:right-6 sm:top-6 sm:w-40"
     >
       <div className="mb-1 flex items-center justify-between">
         <span className="text-[0.6rem] font-semibold uppercase tracking-wide text-zinc-300">Weather</span>
@@ -286,92 +281,79 @@ function WeatherWidgetCompact() {
 }
 
 function Hero({ navigate }) {
-  const [videoOk, setVideoOk] = useState(true);
+  const [useVideo, setUseVideo] = useState(true);
 
   return (
     <section
       id="hero"
-      className="relative flex h-[70vh] min-h-[560px] w-full items-center justify-center overflow-hidden px-4 pt-[75px] sm:px-6 lg:px-8"
+      className="relative flex h-[60vh] max-h-[720px] w-full items-center justify-center overflow-hidden pt-[75px] sm:h-[65vh] lg:h-[70vh]"
     >
-      {/* Cinematic background: video preferred, image fallback, subtle zoom */}
+      {/* Single cinematic background — video OR image, never both */}
       <div className="absolute inset-0 z-0">
-        <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: 1.08 }}
-          transition={{ duration: 14, ease: "easeOut" }}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${HERO_BG_IMAGE})` }}
-        />
-        {videoOk && (
+        {useVideo ? (
           <motion.video
-            initial={{ opacity: 0, scale: 1 }}
-            animate={{ opacity: 1, scale: 1.08 }}
-            transition={{ opacity: { duration: 1 }, scale: { duration: 14, ease: "easeOut" } }}
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.06 }}
+            transition={{ duration: 14, ease: "easeOut" }}
             className="absolute inset-0 h-full w-full object-cover"
             autoPlay
             muted
             loop
             playsInline
-            poster={HERO_BG_IMAGE}
-            onError={() => setVideoOk(false)}
+            onError={() => setUseVideo(false)}
           >
             <source src={HERO_BG_VIDEO} type="video/mp4" />
           </motion.video>
-        )}
-        {/* Dark overlay ~45% for readability */}
-        <div className="absolute inset-0 bg-[#071B14]/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#071B14]/70 via-[#071B14]/40 to-[#071B14]/85" />
-      </div>
-
-      {/* Small decorative blobs, behind content only */}
-      <div className="pointer-events-none absolute inset-0 z-10">
-        {BLOBS.map((b, i) => (
+        ) : (
           <motion.div
-            key={i}
-            className="absolute rounded-full bg-white/10 blur-2xl"
-            style={{ ...b, width: b.size, height: b.size }}
-            animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.1, 1] }}
-            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut" }}
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.06 }}
+            transition={{ duration: 14, ease: "easeOut" }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${HERO_BG_IMAGE})` }}
           />
-        ))}
+        )}
+        {/* single dark overlay */}
+        <div className="absolute inset-0 bg-black/45" />
       </div>
 
       <WeatherWidgetCompact />
 
-      {/* Glassmorphism card */}
+      {/* Centered glassmorphism card */}
       <motion.div
-        initial={{ opacity: 0, y: 32, scale: 0.97 }}
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 w-[95%] max-w-[520px]"
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-20 mx-auto flex w-[95%] max-w-[520px] items-center justify-center px-4"
       >
         <GlassCard
           style={{
+            width: "100%",
             padding: "0",
             borderRadius: "28px",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
             background: "rgba(20,20,20,0.45)",
             border: "1px solid rgba(255,255,255,0.12)",
-            boxShadow: "0 25px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
           }}
         >
-          <div className="px-6 py-8 text-center sm:px-9 sm:py-10">
+          <div className="px-6 py-7 text-center sm:px-9 sm:py-8">
             <motion.h1
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.6 }}
+              transition={{ delay: 0.12, duration: 0.5 }}
               className="mb-2 font-extrabold tracking-tight text-white"
               style={{
                 fontFamily: "'Inter','Poppins',sans-serif",
-                fontSize: "clamp(1.9rem, 4.2vw, 2.75rem)",
+                fontSize: "clamp(1.7rem, 3.6vw, 2.4rem)",
                 textShadow: "0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
               <motion.span
                 initial={{ scale: 0.8, rotate: -15, opacity: 0 }}
                 animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5, ease: "backOut" }}
+                transition={{ delay: 0.24, duration: 0.45, ease: "backOut" }}
                 className="mr-2 inline-block"
               >
                 🌱
@@ -380,35 +362,43 @@ function Hero({ navigate }) {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.28, duration: 0.6 }}
-              className="mb-7 text-sm font-medium text-zinc-300 sm:text-base"
+              transition={{ delay: 0.22, duration: 0.5 }}
+              className="mb-6 text-sm font-medium text-zinc-300 sm:text-base"
               style={{ fontFamily: "'Inter','Poppins',sans-serif" }}
             >
               Smart farming assistance powered by AI
             </motion.p>
 
-            <div className="grid grid-cols-2 gap-3">
-              <PremiumButton delay={0.36} onClick={() => navigate("/predict")} className="px-3 py-3.5 text-xs uppercase tracking-wide sm:text-sm">
+            <motion.div
+              className="grid grid-cols-2 gap-3"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.08, delayChildren: 0.3 } },
+              }}
+            >
+              <PremiumButton onClick={() => navigate("/predict")} className="px-3 py-3 text-xs uppercase tracking-wide sm:text-sm">
                 🔍 Predict Disease
               </PremiumButton>
-              <PremiumButton delay={0.42} onClick={() => navigate("/news")} className="px-3 py-3.5 text-xs uppercase tracking-wide sm:text-sm">
+              <PremiumButton onClick={() => navigate("/news")} className="px-3 py-3 text-xs uppercase tracking-wide sm:text-sm">
                 📰 News Updates
               </PremiumButton>
-              <PremiumButton delay={0.48} onClick={() => navigate("/surveys")} className="px-3 py-3.5 text-xs uppercase tracking-wide sm:text-sm">
+              <PremiumButton onClick={() => navigate("/surveys")} className="px-3 py-3 text-xs uppercase tracking-wide sm:text-sm">
                 📋 Take Survey
               </PremiumButton>
-              <PremiumButton delay={0.54} onClick={() => navigate("/chatbot")} className="px-3 py-3.5 text-xs uppercase tracking-wide sm:text-sm">
+              <PremiumButton onClick={() => navigate("/chatbot")} className="px-3 py-3 text-xs uppercase tracking-wide sm:text-sm">
                 🤖 AI Chatbot
               </PremiumButton>
-            </div>
+            </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.62, duration: 0.6 }}
-              className="mt-7 border-t border-white/10 pt-5"
+              transition={{ delay: 0.55, duration: 0.5 }}
+              className="mt-6 border-t border-white/10 pt-4"
             >
               <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-zinc-500">Connect With Us</p>
               <div className="flex justify-center gap-3">
@@ -420,27 +410,6 @@ function Hero({ navigate }) {
             </motion.div>
           </div>
         </GlassCard>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.7 }}
-        className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5 text-zinc-400"
-      >
-        <span className="text-[0.6rem] font-semibold uppercase tracking-[0.25em]">Scroll</span>
-        <motion.div
-          className="flex h-7 w-4 items-start justify-center rounded-full border border-zinc-500/60 p-1"
-          animate={{ y: [0, 4, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <motion.span
-            className="h-1 w-1 rounded-full bg-[#22C55E]"
-            animate={{ y: [0, 8, 0], opacity: [1, 0.3, 1] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
       </motion.div>
     </section>
   );
@@ -522,7 +491,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============================== NEWS (weather moved to hero) ============================== */}
+      {/* ============================== NEWS ============================== */}
       <section className="px-4 py-24 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">
           <Reveal>
