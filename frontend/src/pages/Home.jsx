@@ -290,11 +290,120 @@ const HOME_STYLES = `
   @keyframes floatAvatar { 0%, 100% { transform: translateY(0) translateZ(40px); } 50% { transform: translateY(-15px) translateZ(40px); } }
   @keyframes blink { 0%, 48%, 52%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
 
+  /* --- ABOUT US SECTION --- */
+  .about-section {
+    position: relative;
+    z-index: 10;
+    max-width: 700px;
+    width: 100%;
+    margin: 40px auto 0;
+    padding: 40px 50px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 30px 60px var(--card-shadow);
+    text-align: left;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 0.7s;
+  }
+
+  .about-heading {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .about-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+
+  .about-description {
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 30px;
+    text-align: center;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 24px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px;
+  }
+
+  .about-card {
+    padding: 20px;
+    border-radius: 14px;
+    background: var(--social-bg);
+    border: 1px solid var(--social-border);
+  }
+
+  .about-card-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .about-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+  }
+
+  .about-card-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .about-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--divider);
+  }
+
+  .about-stat-value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .about-stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
   /* --- RESPONSIVE --- */
   @media (max-width: 640px) {
     .home-container { padding: 100px 20px 40px; }
     .hero-title { font-size: 2.2rem; }
     .hero-subtitle { font-size: 1rem; }
+    .about-section { padding: 30px 24px; }
+    .about-title { font-size: 1.4rem; }
   }
 
   /* --- REDUCED MOTION (accessibility floor) --- */
@@ -310,12 +419,40 @@ const HOME_STYLES = `
       animation: none !important;
       transition: none !important;
     }
+    .about-section {
+      animation: none !important;
+    }
     .action-btn-wrapper,
-    .social-footer {
+    .social-footer,
+    .about-section {
       opacity: 1;
     }
   }
 `;
+
+const ABOUT_HIGHLIGHTS = [
+  {
+    icon: "🌾",
+    title: "Built for Farmers",
+    text: "Designed with real growers in mind, so every feature solves an everyday field problem.",
+  },
+  {
+    icon: "🧠",
+    title: "AI-Driven Insights",
+    text: "Machine learning models trained to recognize crop diseases and support faster decisions.",
+  },
+  {
+    icon: "🔒",
+    title: "Trusted & Secure",
+    text: "Your data stays private, with reliable performance you can depend on every season.",
+  },
+];
+
+const ABOUT_STATS = [
+  { value: "10K+", label: "Farmers Supported" },
+  { value: "50+", label: "Crop Types Covered" },
+  { value: "24/7", label: "AI Availability" },
+];
 
 /* ============================================================
  * Sub-components
@@ -405,6 +542,43 @@ const SocialFooter = () => (
   </div>
 );
 
+/**
+ * Professional "About Us" section describing the product and team mission.
+ */
+const AboutSection = () => (
+  <section className="about-section" aria-labelledby="about-us-title">
+    <p className="about-heading">About Us</p>
+    <h2 className="about-title" id="about-us-title">
+      Empowering Farmers with AI
+    </h2>
+    <p className="about-description">
+      Green Sathi is an AI-powered farming assistant built to help growers detect crop
+      diseases early, stay informed with the latest agricultural news, and make confident,
+      data-backed decisions in the field. Our mission is to make advanced agricultural
+      intelligence accessible to every farmer, regardless of scale or location.
+    </p>
+
+    <ul className="about-grid">
+      {ABOUT_HIGHLIGHTS.map(({ icon, title, text }) => (
+        <li className="about-card" key={title}>
+          <span className="about-card-icon" aria-hidden="true">{icon}</span>
+          <h3 className="about-card-title">{title}</h3>
+          <p className="about-card-text">{text}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div className="about-stats">
+      {ABOUT_STATS.map(({ value, label }) => (
+        <div key={label}>
+          <span className="about-stat-value">{value}</span>
+          <span className="about-stat-label">{label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
 /* ============================================================
  * Home
  * ============================================================ */
@@ -454,6 +628,8 @@ export default function Home() {
           </main>
         </GlassCard>
       </div>
+
+      <AboutSection />
     </div>
   );
 }
