@@ -32,7 +32,13 @@ app.add_middleware(
 app.include_router(predict_router, prefix="/api")
 app.include_router(news_router, prefix="/api")
 
+# Root endpoint
+@app.get("/")
+def root():
+    return {"message": "Green Sathi API is running", "docs": "/docs", "health": "/health"}
+
 # Health check
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
