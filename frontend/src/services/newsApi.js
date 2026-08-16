@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "../utils/constants";
+
 export async function fetchNews() {
-  const response = await fetch("https://green-sathi.onrender.com/api/news/"); // 👈 trailing slash REQUIRED
+  const response = await fetch(`${API_BASE_URL}/api/news/`); // 👈 trailing slash REQUIRED
 
   if (!response.ok) {
     throw new Error("Failed to fetch news");
@@ -7,8 +9,9 @@ export async function fetchNews() {
 
   const data = await response.json();
 
-  console.log("NEWS API FULL RESPONSE:", data);
+  console.log("NEWS RECEIVED IN UI:", data);
 
   // ✅ RETURN ONLY ARTICLES
   return data.articles;
 }
+

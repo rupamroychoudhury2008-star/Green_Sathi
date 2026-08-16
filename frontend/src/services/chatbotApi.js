@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://green-sathi.onrender.com";
+import { API_BASE_URL } from "../utils/constants";
 
 export async function sendMessage(message) {
   const res = await fetch(`${API_BASE_URL}/api/chatbot`, {
@@ -18,3 +18,4 @@ export async function sendMessage(message) {
   // ✅ backend returns { reply: "..." }
   return data.reply;
 }
+
